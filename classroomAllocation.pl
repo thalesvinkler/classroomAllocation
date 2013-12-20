@@ -83,33 +83,30 @@
 %
 %
 %
-%
-
-
+% ---------------- INICIO BASE DE DADOS ----------------
 % sala(nomeSala, posX, posY, [(diaLivre, horarioLivre)|_]).
-%sala(patAt010, 26, 17, []).
-%sala(patAt012, 28, 17, []).
-%sala(patAt014, 30, 17, []).
-%sala(patAt016, 32, 17, []).
+sala(patAt010, 26, 17, [all]).
+sala(patAt012, 28, 17, [all]).
+sala(patAt014, 30, 17, [all]).
+sala(patAt016, 32, 17, [all]).
 
-%sala(patBt010, 26, 19, []).
-%sala(patBt012, 28, 19, []).
-%sala(patBt014, 30, 19, []).
-%sala(patBt016, 32, 19, []).
+sala(patBt010, 26, 19, [all]).
+sala(patBt012, 28, 19, [all]).
+sala(patBt014, 30, 19, [all]).
+sala(patBt016, 32, 19, [all]).
 
-%sala(pjcAt010, 28, 12, []).
-%sala(pjcAt012, 20, 12, []).
-%sala(pjcAt014, 32, 12, []).
-%sala(pjcAt016, 34, 12, []).
+sala(pjcAt010, 28, 12, [all]).
+sala(pjcAt012, 20, 12, [all]).
+sala(pjcAt014, 32, 12, [all]).
+sala(pjcAt016, 34, 12, [all]).
 
-%sala(pjcBt010, 28, 14, []).
-%sala(pjcBt012, 20, 14, []).
-%sala(pjcBt014, 32, 14, []).
-sala(pjcBt016, 34, 14, []).
+sala(pjcBt010, 28, 14, [all]).
+sala(pjcBt012, 30, 14, [all]).
+sala(pjcBt014, 32, 14, [all]).
+sala(pjcBt016, 34, 14, [all]).
 
 
 % disciplina(nomeDisc, nomeDep, [(Dia, Horario)|_]).
-
 disciplina(computacaoBasica, cic, [(seg, 14),(qua, 14),(sex, 14)]).
 disciplina(linguagensDeProgramacao, cic, [(ter, 19), (qui, 21)]).
 disciplina(poo, cic, [(seg, 8), (qua, 8)]).
@@ -125,23 +122,25 @@ disciplina(fisica1, fis, [(seg, 10),(qua, 10)]).
 disciplina(fisica2, fis, [(ter, 10),(qui, 10)]).
 disciplina(fisica3, fis, [(qua, 8),(sex, 8)]).
 
+% disciplina(nomeDisc, nomeDep).
 disciplina(computacaoBasica, cic).
 disciplina(linguagensDeProgramacao, cic).
 disciplina(poo, cic).
 disciplina(oac, cic).
 
 % unidAcadem(nomeDep, posX, posY).
-
 unidAcadem(cic, 24, 4).
 unidAcadem(est, 26, 4).
 unidAcadem(mat, 3, 6).
 unidAcadem(fis, 4, 19).
 unidAcadem(adm, 10, 19).
+% ---------------- FIM BASE DE DADOS ----------------
 
-% distOrig = distancia da origem 
+
+% -------- distOrig = distancia da origem --------
 distOrig(X, Y, W):- pow(X,A), pow(Y,B), W is sqrt(A+B).
 
-% distPont - distancia entre dois pontos
+% -------- distPont - distancia entre dois pontos ---------
 distPont(XA, YA, XB, YB, W):- pow(XB-XA, R1), pow(YB-YA, R2), W is sqrt(R1+R2).
 
 pow(X, Y):- Y is X*X. 
@@ -149,34 +148,28 @@ pow(X, Y):- Y is X*X.
 
 
 % 1) Alocar a disciplina M automaticamente, na sala mais perto da unidAcadem UA ?
-% alocaDisc(nomeDisc).
 
-alocaDiscAuto(N):- disciplina(N, UA), unidAcadem(UA, Xa, Ya), salaPerto(Xa, Ya).
+% -------- alocaDisc(nomeDisc) --------
+alocaDiscAuto(N):- disciplina(N, UA), unidAcadem(UA, Xa, Ya), salaPerto(Xa, Ya, R), write(R).
 
 salaPerto(Xa, Ya, R):- criaListDist(Xa, Ya, L), menorDist(R, L).
 
 
-% Cria lista de tuplas (NomeSala, X, Y)
+% -------- Cria lista de tuplas (NomeSala, X, Y) --------
 salas(L):- findall((Z, Xb, Yb), sala(Z, Xb, Yb, _), L).
 
 
-% Cria Lista de tuplas (NomeSala, Distancia).
-% Arg = X, Y, Lista
-% Return = Lista de Tuplas(NomeSala, Distancia) 
-
-criaListDist(Xa, Ya, R1):- salas(L), montaTupla(Xa, Ya, L, R1).
-
-montaTupla(Xa, Ya, [(Z, Xb, Yb)|RL], R1):- distPont(Xa, Ya, Xb, Yb, W), append([(Z, W)], R1, R2), montaTupla(Xa, Ya, RL, R2), !.
-%SmontaTupla(Xa, Ya, R2, R2).
+% -------- Cria Lista de tuplas (NomeSala, Distancia)   --------
+% -------- Arg = X, Y, Lista                             --------
+% -------- Return = Lista de Tuplas(NomeSala, Distancia) --------
+criaListDist(Xa, Ya, R3):- salas(L), montaTupla(Xa, Ya, L, R1, R3).
+montaTupla(Xa, Ya, [(Z, Xb, Yb)|RL], R1, R3):- distPont(Xa, Ya, Xb, Yb, W), append([(Z, W)], R1, R2), montaTupla(Xa, Ya, RL, R2, R3), !.
+montaTupla(Xa, Ya, [], R2, R2).
 
 
-%montaTupla(Xa, Ya, [(Z, Xb, Yb)|RL], [(Z, W)|_]):- distPont(Xa, Ya, Xb, Yb, W), montaTupla(Xa, Ya, RL, [(Z, W)|_]).
-%montaTupla(Xa, Ya, [], R2):- !.
-
-
-% Verifica na lista [(Z2,W2)|R] de tuplas (com o nome da sala Zi e a distancia Wi da sala 
-% a um determinado ponto) a menor distancia
-% retorna a tupla (Z1,W1) sendo W1 a menor distancia encontrada e Z1 o nome da sala 
+% -------- Verifica na lista [(Z2,W2)|R] de tuplas (com o nome da sala Zi e a distancia Wi da sala --------
+% -------- a um determinado ponto) a menor distancia --------
+% -------- retorna a tupla (Z1,W1) sendo W1 a menor distancia encontrada e Z1 o nome da sala --------
 menorDist(X,[X]).
 menorDist((Z1,W1),[(Z2,W2)|R]):- menorDist((Z1,W1),R), W1 < W2, !. 
 menorDist((Z2,W2),[(Z2,W2)|_]).   
@@ -186,10 +179,9 @@ menorDist((Z2,W2),[(Z2,W2)|_]).
 % 2) Alocar a disciplina M, nos horarios [H|_] dos dias [Dia|_] na sala mais perto da unidAcadem UA ?
 % alocaDisc(nomeDisc, [(Dia,H)|_])
 
+alocaDiscAuto(N):- disciplina(N, UA), unidAcadem(UA, Xa, Ya), salaPerto(Xa, Ya, R), achaHorarioLivre(), write(R).
 
-alocaDisc(N, [(Dia, Hora)|_]):- disciplina(N, UA), unidAcadem(UA, Xa, Ya), achaSalas(L), salaPerto(Xa, Ya, L), 
-								horarioLivre([(Dia, Hora)|_]).
-
+achaHorarioLivre([(Dia, Hora)|_]):-
 
 
 listaSalas(Z, L, [Z|L]).
