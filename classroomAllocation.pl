@@ -50,9 +50,9 @@
 %  1  |__ __ __ __ 
 %  0   1  2  3  4  
 %
-%
-%
-% DUVIDAS:
+
+
+% ---------------- DUVIDAS ----------------
 %
 %	1 - Como fazer o proprio codigo adicionar fatos a base da dedos?
 %		O proprio codigo se escrevendo, nume logica de IA.
@@ -60,29 +60,24 @@
 %			em consideracao na alocacao da próxima sala?
 %		- OU.... dados todos informacoes de tudo(sala, horarios e dias das disciplina, localizacao das salas e departamentos) 
 %			com apenas um comando a alocao é feita automaticamente?!
-%		
-%
-%
 %
 %
 %		Pois há duas possibilidades:
 %			1) Base de dados de disciplinas sem horario e dia de aula - Usuario insere esses dados - ??Criar uma pilha de memoria??
 %				disciplina(computacaoBasica, cic).
 %				disciplina(linguagensDeProgramacao, cic).
-			
+%			
 %			
 %			2) Base de dados de disciplinas com horario e dia de aula - Realiza busca dos horairos e dias 
 %				disciplina(computacaoBasica, cic, [(seg, 14),(qua, 14),(sex, 14)]).
 %				disciplina(linguagensDeProgramacao, cic, [(ter, 19), (qui, 21)]).
 %
-%
 % 
 %
 %	2 - Como retornar uma lista de salas? Apenas retorna uma lista com uma sala, ou retorna a sala.
 %		R: findall().
-%
-%
-%
+% -----------------------------------------
+
 % ---------------- INICIO BASE DE DADOS ----------------
 % sala(nomeSala, posX, posY, [(diaLivre, horarioLivre)|_]).
 sala(patAt010, 26, 17, [all]).
@@ -104,7 +99,6 @@ sala(pjcBt010, 28, 14, [all]).
 sala(pjcBt012, 30, 14, [all]).
 sala(pjcBt014, 32, 14, [all]).
 sala(pjcBt016, 34, 14, [all]).
-
 
 % disciplina(nomeDisc, nomeDep, [(Dia, Horario)|_]).
 disciplina(computacaoBasica, cic, [(seg, 14),(qua, 14),(sex, 14)]).
@@ -134,7 +128,14 @@ unidAcadem(est, 26, 4).
 unidAcadem(mat, 3, 6).
 unidAcadem(fis, 4, 19).
 unidAcadem(adm, 10, 19).
-% ---------------- FIM BASE DE DADOS ----------------
+% ------------------------------------------------------
+
+% --------------------- MAIN ---------------------------
+main :-	write('Qual disciplina gostaria de alocar ?'),
+		read(Disciplinas),
+		alocaDiscAuto(Disciplinas),
+		write('Obrigado').
+% ------------------------------------------------------
 
 
 % -------- distOrig = distancia da origem --------
@@ -162,16 +163,18 @@ salas(L):- findall((Z, Xb, Yb), sala(Z, Xb, Yb, _), L).
 % -------- Cria Lista de tuplas (NomeSala, Distancia)   --------
 % -------- Arg = X, Y, Lista                             --------
 % -------- Return = Lista de Tuplas(NomeSala, Distancia) --------
-criaListDist(Xa, Ya, R3):- salas(L), montaTupla(Xa, Ya, L, R1, R3).
+% -------- DIFICULDADE: Fazer o 4o arg de montaTupla retornar a tupla (Z, W). Estava retornando (Z, X, Y) --------
+% -------- SOLUCAO: Adicionar mais um arg(R3) sendo ele lista, apenas para ele retornar com a tupla que estava em R2 --------
+criaListDist(Xa, Ya, R3):- salas(L), montaTupla(Xa, Ya, L, _, R3).
 montaTupla(Xa, Ya, [(Z, Xb, Yb)|RL], R1, R3):- distPont(Xa, Ya, Xb, Yb, W), append([(Z, W)], R1, R2), montaTupla(Xa, Ya, RL, R2, R3), !.
-montaTupla(Xa, Ya, [], R2, R2).
+montaTupla(_, _, [], R2, R2).
 
 
 % -------- Verifica na lista [(Z2,W2)|R] de tuplas (com o nome da sala Zi e a distancia Wi da sala --------
 % -------- a um determinado ponto) a menor distancia --------
 % -------- retorna a tupla (Z1,W1) sendo W1 a menor distancia encontrada e Z1 o nome da sala --------
 menorDist(X,[X]).
-menorDist((Z1,W1),[(Z2,W2)|R]):- menorDist((Z1,W1),R), W1 < W2, !. 
+menorDist((Z1,W1),[(_,W2)|R]):- menorDist((Z1,W1),R), W1 < W2, !. 
 menorDist((Z2,W2),[(Z2,W2)|_]).   
 
 
@@ -179,9 +182,8 @@ menorDist((Z2,W2),[(Z2,W2)|_]).
 % 2) Alocar a disciplina M, nos horarios [H|_] dos dias [Dia|_] na sala mais perto da unidAcadem UA ?
 % alocaDisc(nomeDisc, [(Dia,H)|_])
 
-alocaDiscAuto(N):- disciplina(N, UA), unidAcadem(UA, Xa, Ya), salaPerto(Xa, Ya, R), achaHorarioLivre(), write(R).
-
-achaHorarioLivre([(Dia, Hora)|_]):-
+%alocaDiscAuto(N):- disciplina(N, UA), unidAcadem(UA, Xa, Ya), salaPerto(Xa, Ya, R), achaHorarioLivre(), write(R).
+%achaHorarioLivre([(Dia, Hora)|_]).
 
 
 listaSalas(Z, L, [Z|L]).
