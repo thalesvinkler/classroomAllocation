@@ -132,14 +132,43 @@ unidAcadem(adm, 10, 19).
 
 % --------------------- MAIN ---------------------------
 % ----------------- How to star?!  ---------------------
-% ---- Apos ter sido caregado, chame "main." e ---------
-% ---- escreva o nome de uma das disciplinas   ---------
-% ---- que estao no banco de fatos, ex: "oac." ---------
+% ------- Apos ter sido caregado, chame "main." --------
 % ------------------------------------------------------
-main :-	write('Qual disciplina gostaria de alocar ?'),
+alocacao :-	write('          ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+          ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+          :::::   Qual disciplina gostaria de alocar ?   :::::::::::::::::::::::::::::::::::::::::::::::::::::
+          ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+          :::::   Dispiplina:  '),
 		read(Disciplinas),
 		alocaDiscAuto(Disciplinas),
-		write('Obrigado').
+		write('          ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+          ::::::::::      OBRIGADO        ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::').
+
+
+main:-	Arq = 'header.txt',
+        	open(Arq, read, Fp),
+        	get_char(Fp, Char),
+        	printaChar(Char, Fp),
+     		close(Fp),
+     		menu(Op),
+     		Case = Op, Case = 1, alocacao; Case = 2. %Switch Case do menu
+ 
+printaChar(end_of_file, _) :- !.
+printaChar(Char, Fp) :-
+        print(Char),
+        get_char(Fp, Char2),
+        printaChar(Char2, Fp).
+
+menu(Op):-	write('\n          ::::::::::::::::  MENU  ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+          :::::                           ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+          :::::   1 - Alocar disciplina   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+          :::::   2 - Sair                ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+          ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+          ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+          '),
+		write(':::::   Opcao:  '),
+		read(Op).
+
 % ------------------------------------------------------
 
 
@@ -156,7 +185,10 @@ pow(X, Y):- Y is X*X.
 % 1) Alocar a disciplina M automaticamente, na sala mais perto da unidAcadem UA ?
 
 % -------- alocaDisc(nomeDisc) --------
-alocaDiscAuto(N):- disciplina(N, UA), unidAcadem(UA, Xa, Ya), salaPerto(Xa, Ya, R), write(R).
+alocaDiscAuto(N):-	disciplina(N, UA), unidAcadem(UA, Xa, Ya), salaPerto(Xa, Ya, R),
+					write('          :::: '),
+					write(R),
+					write(' ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n').
 
 salaPerto(Xa, Ya, R):- criaListDist(Xa, Ya, L), menorDist(R, L).
 
