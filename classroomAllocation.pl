@@ -131,6 +131,11 @@ unidAcadem(adm, 10, 19).
 % ------------------------------------------------------
 
 % --------------------- MAIN ---------------------------
+% ----------------- How to star?!  ---------------------
+% ---- Apos ter sido caregado, chame "main." e ---------
+% ---- escreva o nome de uma das disciplinas   ---------
+% ---- que estao no banco de fatos, ex: "oac." ---------
+% ------------------------------------------------------
 main :-	write('Qual disciplina gostaria de alocar ?'),
 		read(Disciplinas),
 		alocaDiscAuto(Disciplinas),
